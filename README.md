@@ -26,5 +26,5 @@ grep contig3 mybam.cov | awk '{print $3}' | python hilma.py vector - custom_pref
 ```
 
 ```
-python hilma.py custom.cov 0 3 contig_002
+python hilma.py custom custom.cov 0 3 contig_002
 ```
