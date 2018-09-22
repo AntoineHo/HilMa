@@ -19,6 +19,12 @@ This usage may change in future commits!
 ```
 samtools depth mybam.bam > mybam.cov
 python hilma.py mybam.cov contig3
-grep contig3 mybam.cov | python hilma.py vector - ctg3
+```
+
+```
+grep contig3 mybam.cov | awk '{print $3}' | python hilma.py vector - custom_prefix
+```
+
+```
 python hilma.py custom.cov 0 3 contig_002
 ```
