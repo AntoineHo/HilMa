@@ -27,16 +27,17 @@ Turtle::Turtle(std::vector<unsigned long> pvector, int pwidth, int pheight, std:
   }
   //std::cout << vmin << " & " << vmax << std::endl;
 
-  surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, width, height);
-  cr = cairo_create (surface);
+  //surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, width, height);
+  surface = cairo_svg_surface_create(std::string(name + ".out.svg").c_str(), width, height);
+  cr = cairo_create(surface);
   cairo_move_to(cr, 0, 0);
-  cairo_set_line_width (cr, 0.02);
-  cairo_rectangle (cr, 0, 0, width, height); // WHITE BACKGROUND
-  cairo_set_source_rgb (cr, 1, 1, 1);
-  cairo_fill (cr);
-  cairo_rectangle (cr, 16, 20, width-260, height-35); // GREY BACK
-  cairo_set_source_rgb (cr, 0.82, 0.82, 0.82);
-  cairo_fill (cr);
+  cairo_set_line_width(cr, 0.02);
+  cairo_rectangle(cr, 0, 0, width, height); // WHITE BACKGROUND
+  cairo_set_source_rgb(cr, 1, 1, 1);
+  cairo_fill(cr);
+  cairo_rectangle(cr, 16, 20, width-260, height-35); // GREY BACK
+  cairo_set_source_rgb(cr, 0.82, 0.82, 0.82);
+  cairo_fill(cr);
 }
 
 void Turtle::left() {
@@ -109,14 +110,15 @@ void Turtle::stop() {
   cairo_move_to(cr, width-90, height-35);
   cairo_show_text(cr, toString(vmax));
   // EFFECTIVE CAIRO DESTROY
-  cairo_surface_write_to_png(surface, std::string(name + ".out.png").c_str());
+  //cairo_surface_write_to_png(surface, std::string(name + ".out.png").c_str());
   cairo_destroy(cr);
   cairo_surface_destroy(surface);
 
   // CAIRO COLORBAR SECOND FILE
   cairo_surface_t *surface;
   cairo_t *cr;
-  surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, 300, 1000);
+  //surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, 300, 1000);
+  surface = cairo_svg_surface_create(std::string(name + ".colorbar.svg").c_str(), 300, 1000);
   cr = cairo_create (surface);
 
   cairo_rectangle (cr, 0, 0, 500, 1000); // WHITE BACKGROUND
@@ -149,7 +151,7 @@ void Turtle::stop() {
   cairo_move_to(cr, 205, 980);
   cairo_show_text(cr, toString(vmax));
 
-  cairo_surface_write_to_png(surface, std::string(name + ".colorbar.png").c_str());
+  //cairo_surface_write_to_svg(surface, std::string(name + ".colorbar.svg").c_str());
   cairo_destroy(cr);
   cairo_surface_destroy(surface);
   std::cout << "Done!" << std::endl;

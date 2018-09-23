@@ -10,6 +10,7 @@
 #include <algorithm> // std::min_element
 #include <iterator>  // std::begin, std::end
 #include <cairo.h>
+#include <cairo-svg.h> 
 
 // OBJECTS
 
