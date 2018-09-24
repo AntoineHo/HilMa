@@ -17,6 +17,7 @@ def main() :
     sam = subparsers.add_parser('sam') # in case of reading a samtools depth information
     sam.add_argument('input',nargs=1,type=str,help='A valid file path to a samtools depth output.')
     sam.add_argument('name',nargs=1,type=str,help='ID (name) of the contig to plot.')
+    sam.add_argument('--bin','-b',nargs=1,default=[100],help="Set this to average coverage on bins of length b. Default: 100.")
     sam.add_argument('--png','-p',action='store_true',help="Set this to also output to a .png file.")
     sam.set_defaults(func=samread)
 
@@ -25,11 +26,13 @@ def main() :
     custom.add_argument('id_column',nargs=1,type=int,help='Column number (0 indexed) of the id.')
     custom.add_argument('value_column',nargs=1,type=int,help='Column number (0 indexed) of the coverage value per bin/basepair.')
     custom.add_argument('name',nargs=1,type=str,help='ID (name) of the contig/sequence/... to plot (found in table file in id_column).')
+    custom.add_argument('--bin','-b',nargs=1,default=[100],help="Set this to average coverage on bins of length b. Default: 100.")
     custom.add_argument('--sep','-s',nargs=1,type=str,required=False,default=["\t"],help='Separation marker of table file. Default: tab character.')
     custom.add_argument('--png','-p',action='store_true',help="Set this to also output to a .png file.")
     custom.set_defaults(func=customread)
 
     vector  = subparsers.add_parser('vector') # in case of reading a vector from stdin (from awk, R, etc)
+    vector.add_argument('--bin','-b',nargs=1,default=[100],help="Set this to average coverage on bins of length b. Default: 100.")
     vector.add_argument('--name','-n',nargs=1,type=str,default=["vector"],required=False,help='Name of the current vector. Default: \'vector\'.')
     vector.add_argument('--png','-p',action='store_true',help="Set this to also output to a .png file.")
     vector.set_defaults(func=stdinread)
@@ -41,6 +44,13 @@ def main() :
 
 def stdinread(args) :
     name = args.name[0]
+    try :
+        bin = int(args.bin[0])
+        if bin < 0 or bin > 10000 :
+            raise Exception("Invalid bin size!")
+    except :
+        print("WARNING: invalid binsize, must be between 0 and 10000. Setting to default: 100")
+        bin = 100
     # CURRENT WD
     cwd = os.getcwd()
     # CHANGE WORKING DIR TO HILMA DIRECTORY
@@ -48,12 +58,15 @@ def stdinread(args) :
     dirHILMAPath = os.path.dirname(os.path.abspath(inspect.stack()[0][1]))
     os.chdir(dirHILMAPath)
     # RUN SUBPROCESS
-    command = "./HilMa {}".format(name)
+    command = "./HilMa {} {}".format(name, bin)
     launchcommand(command)
 
     if args.png :
         convertPNG(name)
-    # CP TO cwd
+
+    if cwd == dirHILMAPath :
+        return
+
     print("Moving files...")
     out = renamecontig(name) + ".out.svg"
     colorbar = renamecontig(name) + ".colorbar.svg"
@@ -66,15 +79,30 @@ def samread(args) :
     input = args.input[0]
     name = args.name[0]
     png = args.png
-    customread(None, input, name, png)
+    try :
+        bin = int(args.bin[0])
+        if bin < 0 or bin > 10000 :
+            raise Exception("Invalid bin size!")
+    except :
+        print("WARNING: invalid binsize, must be between 0 and 10000. Setting to default: 100")
+        bin = 100
 
-def customread(args, input=None, name=None, png=False) :
+    customread(None, input, name, png, bin)
+
+def customread(args, input=None, name=None, png=False, bin=100) :
     if args != None : # FROM custom
         input = args.input[0]
         idcol = args.id_column[0]
         valcol = args.value_column[0]
         name = args.name[0]
         sepmark = args.sep[0]
+        try :
+            bin = int(args.bin[0])
+            if bin < 0 or bin > 10000 :
+                raise Exception("Invalid bin size!")
+        except :
+            print("WARNING: invalid binsize, must be between 0 and 10000. Setting to default: 100")
+            bin = 100
     else : # FROM sam
         idcol = 0
         valcol = 2
@@ -95,7 +123,7 @@ def customread(args, input=None, name=None, png=False) :
     os.chdir(dirHILMAPath)
 
     # RUN SUBPROCESS
-    command = "./HilMa {}".format(name)
+    command = "./HilMa {} {}".format(name, bin)
     proc = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE, stdout=sys.stdout)
     f = open(path, "r")
     for line in f :
@@ -110,6 +138,9 @@ def customread(args, input=None, name=None, png=False) :
 
     if png :
         convertPNG(name)
+
+    if cwd == dirHILMAPath :
+        return
 
     print("Moving files...")
     command = ""

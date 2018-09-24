@@ -10,13 +10,13 @@
 #include <algorithm> // std::min_element
 #include <iterator>  // std::begin, std::end
 #include <cairo.h>
-#include <cairo-svg.h> 
+#include <cairo-svg.h>
 
 // OBJECTS
 
 class Turtle {
 public:
-  Turtle(std::vector<unsigned long> vector, int width, int height, std::string name);
+  Turtle(std::vector<unsigned long> vector, int width, int height, int vmin, int vmax, int maxsteps, std::string name);
   void left();
   void right();
   void forward();
@@ -25,8 +25,9 @@ public:
   void rgb(int maximum, int minimum, int value, std::vector<int> &colors);
   void convert_coordinates(int x, int y, int &nx, int &ny);
   bool checkBreak();
-  const char* toString(int number);
+  static const char* toString(int number);
   void ren(std::string& name);
+  void CairoStroke();
 private:
   std::string name;
   std::vector<unsigned long> vector;
