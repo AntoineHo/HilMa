@@ -9,9 +9,9 @@ int main(int argc, char* argv[]) {
   if (firstArg == "-h" || firstArg == "--help" || firstArg == "help") {
     printHelp();
     return 1;
-  } else if (firstArg == "-") {
+  } else {
     v = readstdin(); // inits a vector v from READING FROM STDIN
-    name = std::string(argv[2]); // inits a string name from args
+    name = std::string(argv[1]); // inits a string name from args
     std::cout << "Vector total size:\t" << v.size() << std::endl;
   }
   // READING VECTOR!
@@ -170,8 +170,7 @@ std::vector<unsigned long> readstdin() {
 void printHelp() {
   std::cerr << "HilMa builds an hilbert curve from a vector" << std::endl
   << "Usage: " << std::endl
-  << "custom | Hilma - name" << std::endl
-  << "\t- indicates to HilMa to read from stdin." << std::endl
-  << "\tname indicates the name of the vector." << std::endl
+  << "command | Hilma name" << std::endl
+  << "\tname\tpath to the .svg output file." << std::endl
   << "HilMa -h\tprints this message" << std::endl;
 }

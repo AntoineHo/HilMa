@@ -37,20 +37,31 @@ def main() :
 
     args = parser.parse_args()
     args.func(args)
+    print("Done")
     sys.exit()
 
 def stdinread(args) :
+    name = args.name[0]
+    # CURRENT WD
+    cwd = os.getcwd()
     # CHANGE WORKING DIR TO HILMA DIRECTORY
     HILMApath = os.path.abspath(inspect.stack()[0][1])
     dirHILMAPath = os.path.dirname(os.path.abspath(inspect.stack()[0][1]))
     os.chdir(dirHILMAPath)
     # RUN SUBPROCESS
-    command = "./HilMa - {}".format(args.name[0])
+    command = "./HilMa {}".format(name)
     launchcommand(command)
 
     if args.png :
         convertPNG(name)
-
+    # CP TO cwd
+    print("Moving files...")
+    out = renamecontig(name) + ".out.svg"
+    colorbar = renamecontig(name) + ".colorbar.svg"
+    pout = renamecontig(name) + ".out.svg.png"
+    pcolorbar = renamecontig(name) + ".colorbar.svg.png"
+    command = "mv {} {} {} {} {}".format(out, colorbar, pout, pcolorbar, cwd)
+    launchcommand(command)
 
 def samread(args) :
     input = args.input[0]
@@ -76,13 +87,16 @@ def customread(args, input=None, name=None, png=False) :
         path = os.path.abspath(input)
     else :
         raise Exception("ERROR: {} is not a valid file path!".format(input))
+
+    # CURRENT WD
+    cwd = os.getcwd()
     # CHANGE WORKING DIR TO HILMA DIRECTORY
     HILMApath = os.path.abspath(inspect.stack()[0][1])
     dirHILMAPath = os.path.dirname(os.path.abspath(inspect.stack()[0][1]))
     os.chdir(dirHILMAPath)
 
     # RUN SUBPROCESS
-    command = "./HilMa - {}".format(name)
+    command = "./HilMa {}".format(name)
     proc = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE, stdout=sys.stdout)
     f = open(input, "r")
     for line in f :
@@ -97,6 +111,18 @@ def customread(args, input=None, name=None, png=False) :
 
     if png :
         convertPNG(name)
+
+    print("Moving files...")
+    command = ""
+    out = renamecontig(name) + ".out.svg"
+    colorbar = renamecontig(name) + ".colorbar.svg"
+    if png :
+        pout = renamecontig(name) + ".out.svg.png"
+        pcolorbar = renamecontig(name) + ".colorbar.svg.png"
+        command = "mv {} {} {} {} {}".format(out, colorbar, pout, pcolorbar, cwd)
+    else :
+        command = "mv {} {} {}".format(out, colorbar, cwd)
+    launchcommand(command)
 
 def checkFile(path) :
     if path == None :
@@ -131,7 +157,6 @@ def convertPNG(name) :
         cmd2 = "inkscape -z -e {}.png {}".format(colorbar, colorbar)
         launchcommand(cmd1)
         launchcommand(cmd2)
-        print("Done")
         return
     print("Checking if ImageMagick is installed...")
     rc = subprocess.call(['which', 'convert'])
@@ -143,7 +168,6 @@ def convertPNG(name) :
         cmd2 = "convert {} {}.png".format(colorbar, colorbar)
         launchcommand(cmd1)
         launchcommand(cmd2)
-        print("Done")
         return
     print("Please first install Inkscape or ImageMagick before outputting to png...")
 
