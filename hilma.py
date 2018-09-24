@@ -8,7 +8,6 @@ import multiprocessing
 import datetime
 import subprocess
 import inspect
-import cairo
 
 def main() :
     """Gathering arguments and running functions"""
@@ -82,7 +81,7 @@ def customread(args, input=None, name=None, png=False) :
         sepmark = "\t"
         # name from arg of function
         # input from arg of function
-
+    path = None
     if checkFile(input) :
         path = os.path.abspath(input)
     else :
@@ -98,7 +97,7 @@ def customread(args, input=None, name=None, png=False) :
     # RUN SUBPROCESS
     command = "./HilMa {}".format(name)
     proc = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE, stdout=sys.stdout)
-    f = open(input, "r")
+    f = open(path, "r")
     for line in f :
         s = line.split(sepmark)
         while s[idcol] != name :
