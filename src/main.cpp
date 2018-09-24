@@ -16,8 +16,21 @@ int main(int argc, char* argv[]) {
     nv = readstdin(); // inits a vector v from READING FROM STDIN
     name = std::string(argv[1]); // inits a string name from args
     std::cout << "Vector total size:\t" << nv.size() << "bp" << std::endl;
-
   }
+
+  int vmin(0);
+  int vmax(0);
+  // Getting vector infos
+  for (int i(0); i < nv.size(); i++) {
+    if (nv[i] < vmin) {
+      vmin = nv[i];
+    }
+    if (nv[i] > vmax) {
+      vmax = nv[i];
+    }
+  }
+
+  std::cout << "Extrema\t" << vmin << " : " << vmax << std::endl;
 
   std::vector<unsigned long> v; // FINAL VECTOR
   if (bin > 1) {
@@ -29,6 +42,14 @@ int main(int argc, char* argv[]) {
           sub.assign(from, from + bin);
           from += bin;
           int average(accumulate(sub.begin(), sub.end(), 0)/sub.size());
+          if (average > vmax) {
+            std::cout << "WARNING: average > maximum value: " << average << std::endl;
+            for (int i(0); i < sub.size(); i++) {
+              std::cout << sub[i];
+            }
+            std::cout << std::endl;
+          }
+
           v.push_back(average);
       } else {
         sub.assign(from, nv.end());
@@ -45,18 +66,6 @@ int main(int argc, char* argv[]) {
   if (v.size() > 400000) {
     std::cout << "Plotting multiple files to avoid overcharge!" << std::endl;
     std::cout << "Each file corresponds to 400Kb (binned average)" << std::endl;
-  }
-
-  int vmin(0);
-  int vmax(0);
-  // Getting vector infos
-  for (int i(0); i < v.size(); i++) {
-    if (v[i] < vmin) {
-      vmin = v[i];
-    }
-    if (v[i] > vmax) {
-      vmax = v[i];
-    }
   }
 
   int chknbr(0);
