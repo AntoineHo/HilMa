@@ -10,6 +10,7 @@
 #include <sstream> // Necessary to read & fill from cin
 #include <iterator> // Necessary to read & fill from cin
 #include <numeric> // Necessary to use accumulate
+#include <cmath> // Necessary for pow command
 #include <cairo.h>
 #include <cairo-svg.h>
 

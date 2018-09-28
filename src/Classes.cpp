@@ -23,7 +23,7 @@ Turtle::Turtle(std::vector<unsigned long> pvector, int pwidth, int pheight, int 
   cairo_rectangle(cr, 0, 0, width, height); // WHITE BACKGROUND
   cairo_set_source_rgb(cr, 1, 1, 1);
   cairo_fill(cr);
-  cairo_rectangle(cr, 20, 20, width-40, height-40); // GREY BACK
+  cairo_rectangle(cr, 15, 15, width-30, height-30); // GREY BACK
   cairo_set_source_rgb(cr, 0.82, 0.82, 0.82);
   cairo_fill(cr);
 }
@@ -87,16 +87,26 @@ void Turtle::CairoStroke() {
 
 void Turtle::draw(int x0, int y0, int x1, int y1) {
   //std::cout << "Drawing!" << std::endl;
-  std::vector<int> colors;
-  for (int i(0); i < 3; i++) {
-    colors.push_back(0);
-  }
   int cValue(vector[curstep]);
-  rgb(vmax, vmin, cValue, colors);
   float r, g, b;
-  r =  (float(colors[0])/255);
-  g =  (float(colors[1])/255);
-  b =  (float(colors[2])/255);
+  if (cValue > vmax) { // THEN MUST USE BLACK
+    r = 0.0;
+    g = 0.0;
+    b = 0.0;
+  } else if (cValue < vmin) {
+    r = 1.0;
+    g = 1.0;
+    b = 1.0;
+  } else {
+    std::vector<int> colors;
+    for (int i(0); i < 3; i++) {
+      colors.push_back(0);
+    }
+    rgb(vmax, vmin, cValue, colors);
+    r =  (float(colors[0])/255);
+    g =  (float(colors[1])/255);
+    b =  (float(colors[2])/255);
+  }
   //std::cout << r << " " << g << " " << b << std::endl;
   cairo_set_source_rgb(cr, r, g, b);  // Solid color
   cairo_set_line_width(cr, 1);

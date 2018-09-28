@@ -18,19 +18,30 @@ int main(int argc, char* argv[]) {
     std::cout << "Vector total size:\t" << nv.size() << "bp" << std::endl;
   }
 
+  // Getting vector infos
   int vmin(0);
   int vmax(0);
-  // Getting vector infos
-  for (int i(0); i < nv.size(); i++) {
-    if (nv[i] < vmin) {
-      vmin = nv[i];
-    }
-    if (nv[i] > vmax) {
-      vmax = nv[i];
-    }
-  }
 
-  std::cout << "Extrema\t" << vmin << " : " << vmax << std::endl;
+  std::cout << "Computing Mean & Standard deviation..." << std::endl;
+  unsigned long long sum(0);
+  for (auto& n: nv) {
+    sum+= n;
+  } // RANGE BASED LOOP
+  unsigned long long mean(sum / nv.size());
+  long double accum(0.0);
+  std::for_each (nv.begin(), nv.end(), [&](const double d) {
+    accum += (d - mean) * (d - mean);
+  });
+
+  double stdv(sqrt(accum / nv.size()));
+
+  std::cout << "Mean:\t" << mean << "\t" << "Std Dev:\t" << stdv << std::endl;
+  vmin = mean - 3*stdv;
+  if (vmin < 0) {
+    vmin = 0;
+  }
+  vmax = mean + 3*stdv;
+  std::cout << "Assuming a normal distribution:\n> 99.7\% of bases are comprised between " << vmin << " and " << vmax << std::endl;
 
   std::vector<unsigned long> v; // FINAL VECTOR
   if (bin > 1) {
@@ -42,14 +53,6 @@ int main(int argc, char* argv[]) {
           sub.assign(from, from + bin);
           from += bin;
           int average(accumulate(sub.begin(), sub.end(), 0)/sub.size());
-          if (average > vmax) {
-            std::cout << "WARNING: average > maximum value: " << average << std::endl;
-            for (int i(0); i < sub.size(); i++) {
-              std::cout << sub[i];
-            }
-            std::cout << std::endl;
-          }
-
           v.push_back(average);
       } else {
         sub.assign(from, nv.end());
