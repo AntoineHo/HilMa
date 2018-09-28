@@ -1,5 +1,12 @@
 # HilMa
 Hilbert Mapper is a C++ implementation of Hilbert's space filling curve to represent read coverage on genomic sequences. Although it can be used to represent any unidimensional vector of positive numerical data.
+## Installation
+```
+git clone https://github.com/AntoineHo/HilMa.git
+cd HilMa
+chmod +x install.sh
+./install.sh
+```
 ## Usages
 reading a samtools depth output file:
 
