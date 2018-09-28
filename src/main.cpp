@@ -132,12 +132,11 @@ void outColorBar(std::string name, int vmin, int vmax) {
   cairo_set_source_rgb (cr, 0, 0, 0);
   cairo_select_font_face(cr, "Arial", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
   cairo_set_font_size(cr, 24);
-  cairo_move_to(cr, 205, 20);
-  cairo_show_text(cr, Turtle::toString(vmin));
-  cairo_move_to(cr, 205, 500);
-  cairo_show_text(cr, Turtle::toString(vmin + 0.5*(vmax-vmin)));
-  cairo_move_to(cr, 205, 980);
-  cairo_show_text(cr, Turtle::toString(vmax));
+
+  for (int i(0); i < 11; i++) {
+    cairo_move_to(cr, 205, 20 + 96*i);
+    cairo_show_text(cr, Turtle::toString( vmin + 0.1*i*(vmax-vmin) ));
+  }
 
   //cairo_surface_write_to_svg(surface, std::string(name + ".colorbar.svg").c_str());
   cairo_destroy(cr);

@@ -74,10 +74,6 @@ void Turtle::stop() {
   // EFFECTIVE CAIRO DESTROY
   cairo_destroy(cr);
   cairo_surface_destroy(surface);
-  /*
-
-
-  */
   std::cout << "Done!" << std::endl;
 }
 
