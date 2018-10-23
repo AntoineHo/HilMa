@@ -38,7 +38,11 @@ def main() :
     vector.set_defaults(func=stdinread)
 
     args = parser.parse_args()
-    args.func(args)
+    try :
+        args.func(args)
+    except :
+        parser.print_usage()
+        sys.exit(1)
     print("Done")
     sys.exit()
 
